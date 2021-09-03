@@ -6,14 +6,14 @@
       "description": "This blog is for ETC5523 Comminicating with data unit.",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-09-03T19:55:08+10:00"
+      "last_modified": "2021-09-03T20:18:54+10:00"
     },
     {
       "path": "index.html",
       "title": "Zola's Blog",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-09-03T19:55:09+10:00"
+      "last_modified": "2021-09-03T20:18:55+10:00"
     }
   ],
   "collections": ["posts/posts.json"]

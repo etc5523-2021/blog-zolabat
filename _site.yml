@@ -10,10 +10,6 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
-    - text: "Blog entries"
-      menu:
-        - text: "Blog1"
-          href: about-covid-19-in-serbia.html
     - icon: fab fa-github
       href: https://github.com/etc5523-2021/blog-zolabat
 theme: theme.css

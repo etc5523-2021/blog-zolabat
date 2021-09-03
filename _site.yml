@@ -1,12 +1,20 @@
 name: "blog-zolabat"
 title: "Zola's Blog"
 description: |
-  Zola's Blog
+  ETC5523 - Communicating with data
 output_dir: "docs"
 navbar:
+  search: true
   right:
     - text: "Home"
       href: index.html
     - text: "About"
       href: about.html
+    - text: "Blog entries"
+      menu:
+        - text: "Blog1"
+          href: about-covid-19-in-serbia.html
+    - icon: fab fa-github
+      href: https://github.com/etc5523-2021/blog-zolabat
+theme: theme.css
 output: distill::distill_article

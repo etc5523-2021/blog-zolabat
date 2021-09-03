@@ -1,0 +1,168 @@
+---
+title: "About Covid-19 in Serbia"
+description: |
+  "Exploring Covid-19 statistic of Serbia"
+date: 08-31-2021
+output:
+  distill::distill_article:
+    toc: true
+    theme: theme.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+library(DT)
+library(kableExtra)
+library(formattable)
+```
+
+```{r read, include=FALSE}
+data_raw <- read_csv(here("data/owid-covid-data.csv"))
+```
+
+## Introduction
+
+The Covid-19 pandemic is having unprecedented impact globally but some have been more affected than others. In this blog post, I will explore the Covid-19 situation in Serbia using publicly available data. 
+
+## Data description
+
+The data used in this blog was downloaded from [Our World in Data](https://ourworldindata.org) website's GitHub [repo](https://github.com/owid/covid-19-data). 
+
+The original dataset contains `r ncol(data_raw)` variables and `r nrow(data_raw)` observations but for the purpose of this report the following relevant variables has been chosen.
+
+```{r data, include=FALSE}
+data_filtered <- data_raw %>% 
+  select(iso_code,
+         continent,
+         location,
+         date,
+         median_age,
+         life_expectancy,
+         total_cases,
+         new_cases,
+         total_cases_per_million,
+         total_deaths_per_million,
+         total_deaths,
+         new_deaths,
+         new_tests,
+         total_deaths_per_million, 
+         people_vaccinated_per_hundred,
+         people_fully_vaccinated_per_hundred)
+```
+
+|Variable         |Data Type |Description  |
+|:----------------|:---------|:------------|
+|iso_code                            |character |Country code |
+|continent                           |character |Continent of the geographical location |
+|location                            |character |Geographical location |
+|date                                |date      |Date         |
+|median_age                         |numeric      |Median age of the population, UN projection for 2020         |
+|life_expectancy                       |numeric      |Life expectancy at birth in 2019  |
+|total_cases                         |numeric    |Total confirmed cases - cumulative |
+|new_cases                           |numeric    |New confirmed cases of the day|
+|total_deaths                        |numeric    |Total death - cumulative |
+|new_deaths                          |numeric    |New death of the day |
+|new_tests                           |numeric    |New tests conducted of the day |
+|total_death_per_million             |numeric       |Total deaths attributed to COVID-19 per 1,000,000 people         |
+|people_vaccinated_per_hundred       |numeric    |Total number of people who received at least one vaccine dose per 100 people in the total population |
+|people_fully_vaccinated_per_hundred |numeric    |Total number of people who received all doses prescribed by the vaccination protocol per 100 people in the total population |
+|total_cases_per_million             |numeric    |Total confirmed cases of COVID-19 per 1,000,000 people
+ |
+
+## Covid-19 situation in Serbia compared to the world
+
+The following table shows some of the relevant statistics of Serbia compared to the world and European average. As of 30 Aug 2021, Serbia had 111,682 cases per million people which is far more than average of the world and European, 42,701 and 86,340, respectively. For the death attributed to COVID-19, Serbia reported 1070 deaths per million people which is higher than the world average of 769. The possible explanation could be that the median age of Serbia is higher than the rest of the world. 
+
+In addition, we can see from the table that the vaccination status of Serbia is below than the rest of the European countries but it is better than that of the world.
+
+```{r}
+data_table <- data_filtered %>% 
+  filter(date == "2021-08-30") %>% 
+  select(location,
+         continent,
+         total_cases_per_million, 
+         total_deaths_per_million, 
+         people_vaccinated_per_hundred, 
+         people_fully_vaccinated_per_hundred,
+         median_age,
+         life_expectancy) 
+
+row1 <- data_table %>% 
+  filter(location == "Serbia")
+
+row2 <- data_table %>% 
+  filter(continent == "Europe") %>% 
+  group_by(continent) %>% 
+  summarise_each(funs(if(is.numeric(.)) mean(., na.rm = TRUE) else first(.)))
+
+row3 <- data_table %>% 
+  summarise_each(funs(if(is.numeric(.)) mean(., na.rm = TRUE) else first(.)))
+
+table1 <- rbind(row1, row2, row3) %>% 
+  select(!continent)
+
+table1[2, 1] = "Europe"
+
+table1[3, 1] = "World"
+```
+
+```{r}
+table1 %>% kable(caption = "Serbian COVID-19 statistic compared to European and world average", booktabs = T,
+                 col.names = c("Region",
+                    "Cases per million",
+                    "Deaths per million",
+                    "Vaccination 1 percentage",
+                    "Fully vaccinated percentage",
+                    "Median age",
+                    "Life expectancy"),
+                 digits = 0,
+                 format.args = list(big.mark = ",",scientific = FALSE)) %>% 
+  kable_styling("striped", position = "right", full_width = F) %>% 
+  add_header_above(c(" ", "Cases" = 2,"Vaccination"=2,"Age" = 2)) %>% 
+  column_spec(1, bold = TRUE, width = "8em") %>% 
+  pack_rows("Average", 2, 3) %>% 
+  kableExtra::footnote(general = "Data sourced from Our World in Data webisite.")
+```
+
+## Daily numbers
+
+The table below shows the daily new confirmed cases, tests and deaths since the 23 Feb 2020. 
+
+```{r}
+data_filtered %>% 
+  filter(location == "Serbia") %>% 
+  select(date, new_cases, new_tests, new_deaths) %>% 
+  datatable(options = list(pageLength = 10,
+                         columnDefs = list(list(width = "80px", targets = 0))),
+            rownames = FALSE,
+            colnames = c("Date", "Daily New Confirmed Cases", "Daily New Tests", "Daily New Deaths"),
+            caption = "Daily COVID-19 Figures in Serbia")
+```
+
+## References
+
+Mathieu, E., Ritchie, H., Ortiz-Ospina, E. et al. A global database of COVID-19 vaccinations. Nat Hum Behav (2021). https://doi.org/10.1038/s41562-021-01122-8
+
+Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+
+R Core Team (2021). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686,
+  https://doi.org/10.21105/joss.01686
+
+Kirill Müller (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1.
+  https://CRAN.R-project.org/package=here
+  
+Yihui Xie, Joe Cheng and Xianying Tan (2021). DT: A Wrapper of the JavaScript Library 'DataTables'. R
+  package version 0.18. https://CRAN.R-project.org/package=DT
+
+Hao Zhu (2021). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version
+  1.3.4. https://CRAN.R-project.org/package=kableExtra
+
+Kun Ren and Kenton Russell (2021). formattable: Create 'Formattable' Data Structures. R package version
+  0.2.1. https://CRAN.R-project.org/package=formattable

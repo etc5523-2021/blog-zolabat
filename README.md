@@ -2,7 +2,7 @@
 
 
 This is the blog of Zoljargal Batsaikhan.
-The URL of this blog is https://etc5523-2021.github.io/blog-zolabat/posts/2021-08-31-about-covid-19-in-serbia/.
+The URL of this blog is https://etc5523-2021.github.io/blog-zolabat/
 
 ## Blog Post 1
 

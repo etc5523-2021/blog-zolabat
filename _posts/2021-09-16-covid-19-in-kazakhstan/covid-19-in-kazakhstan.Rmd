@@ -1,21 +1,244 @@
 ---
 title: "Covid-19 in Kazakhstan"
 description: |
-  A short description of the post.
-author: []
+  Exploring Covid-19 situation in Kazakhstan
+author:   
+  - name: Zoljargal Batsaikhan
+    affiliation: Monash Univeristy
 date: 09-16-2021
 output:
   distill::distill_article:
     self_contained: false
 ---
 
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      error = FALSE)
 ```
 
-Distill is a publication format for scientific and technical writing, native to the web.
+```{r}
+library(tidyverse)
+library(here)
+library(DT)
+library(kableExtra)
+library(formattable)
+library(lubridate)
+library(plotly)
+library(ggpubr)
+```
 
-Learn more about using Distill at <https://rstudio.github.io/distill>.
+```{r read, include=FALSE}
+data_raw <- read_csv(here("data/owid-covid-data-updated.csv"))
 
+data_home <- read_csv(here("data/stay-at-home-covid.csv")) %>% 
+  filter(Entity == "Kazakhstan")
+```
+
+
+## Introduction
+
+The Covid-19 pandemic is having unprecedented impact globally but some have been more affected than others. In this blog post, I will explore the Covid-19 situation in Kazakhstan using publicly available data. 
+
+## Data description
+
+The data used in this blog was downloaded from [Our World in Data](https://ourworldindata.org) website's GitHub [repo](https://github.com/owid/covid-19-data). 
+
+The original dataset contains `r ncol(data_raw)` variables and `r nrow(data_raw)` observations but for the purpose of this report the following relevant variables has been chosen.
+
+```{r data, include=FALSE}
+data_filtered <- data_raw %>% 
+  filter(location == "Kazakhstan") %>% 
+  left_join(data_home, by = c("date" = "Day")) 
+```
+
+|Variable         |Data Type |Description  |
+|:----------------|:---------|:------------|
+|continent                           |character |Continent of the geographical location |
+|location                            |character |Geographical location |
+|date                                |date      |Date         |
+|new_cases                           |numeric    |New confirmed cases of the day|
+|total_deaths                        |numeric    |Total death - cumulative |
+|people_vaccinated_per_hundred       |numeric    |Total number of people who received at least one vaccine dose |
+
+## Total confirmed cases 
+
+```{r}
+dates <- tibble(rest = 1:9, from = 1:9, to = 1:9)
+
+dates$rest[1] <- 3
+dates$rest[2] <- 2
+dates$rest[3] <- 1
+dates$rest[4] <- 2
+dates$rest[5] <- 1
+dates$rest[6] <- 2
+dates$rest[7] <- 1
+dates$rest[8] <- 1
+dates$rest[9] <- 2
+
+dates$from[1] <- "2020-03-19"
+dates$from[2] <- "2020-05-11"
+dates$from[3] <- "2020-07-05"
+dates$from[4] <- "2020-08-17"
+dates$from[5] <- "2020-10-28"
+dates$from[6] <- "2020-11-28"
+dates$from[7] <- "2020-12-31"
+dates$from[8] <- "2021-03-28"
+dates$from[9] <- "2021-05-04"
+
+dates$to[1] <- "2020-05-10"
+dates$to[2] <- "2020-07-04"
+dates$to[3] <- "2020-08-16"
+dates$to[4] <- "2020-10-27"
+dates$to[5] <- "2020-11-27"
+dates$to[6] <- "2020-12-30"
+dates$to[7] <- "2021-02-15"
+dates$to[8] <- "2021-04-12"
+dates$to[9] <- "2021-05-09"
+
+dates <- dates %>% 
+  mutate(from = as.Date(from),
+         to = as.Date(to))
+```
+
+
+```{r}
+data_filtered <- data_filtered %>% 
+  filter(date != "2021-07-24") %>%
+  filter(date != "2021-07-23") 
+```
+
+```{r}
+ggplot() +
+  geom_col(data = data_filtered, aes(date, new_cases)) +
+  geom_vline(xintercept = as.Date("2021-06-22"), linetype = "dashed", color = "red")+
+  geom_rect(data = dates, aes(xmin = from, xmax = to, 
+            ymin = -Inf, ymax = Inf, fill = factor(rest)), alpha = 0.1)+
+    theme_classic() +
+    labs(y = "Daily new cases",
+         x = "Date",
+         title = "Daily new cases and stay home restriction in Kazakhstan",
+         caption = "Figure 1. Data sourced from Our World in Data",
+         subtitle = "Recommendations are not working") +
+  #guides(fill=guide_legend(title="Stay home restrictions"),
+         #fill = guide_legend(direction = "horizontal")) +
+  theme(legend.position="bottom",
+        legend.justification="right")+
+  scale_fill_manual(name="Stay home \nrestrictions",
+                    labels=c("recommend not \nleaving house", 
+                                              "require not leaving \nhouse with exceptions", 
+                                              "require not leaving \nhouse with minimal exceptions"), 
+                    values=c("green", "orange", "red"))
+```
+In Figure 1, daily new Covid-19 cases have been plotted with the stay home restriction measures. Since the beginning of the global pandemic the government of Kazakhstan announced only 1 restrict lockdown with minimum exceptions. It is interesting to note that in all 4 periods that the government **recommended** not leaving house, the cases actually increased immediately, while requirements are in place cases seem to decrease. Overall, the Kazakhstan had less than 500 daily cases till July 2021 when it recorded peak cases of 15000.
+
+According to [Reuters](https://www.reuters.com/business/healthcare-pharmaceuticals/kazakhstan-detects-delta-variant-central-asia-braces-third-covid-wave-2021-06-22/), the Delta variant of the coronavirus on 22nd of June 2021. Since this time, the daily new cases in Kazakhstan increased exponentially and reached all time high.
+
+In addition, if we look at the Figure 1, the pattern of zero case after sudden big increase of case numbers can be seen which lead me to suspect there might be data reporting issue. 
+
+## Vaccination in Kazakhstan
+
+Next we looked at the vaccination rate in Kazakhstan.
+
+```{r}
+data2 <- data_raw %>% 
+  select(continent, people_vaccinated_per_hundred, date, location) %>% 
+  drop_na(people_vaccinated_per_hundred) %>% 
+  drop_na(continent) %>% 
+  group_by(continent, date) %>% 
+  summarise(average = mean(people_vaccinated_per_hundred, na.rm = TRUE))
+```
+
+```{r}
+plot1 <- data_filtered %>% 
+  ggplot(aes(x = date,
+             y = new_vaccinations_smoothed)) +
+  geom_col(size = 0.8) +
+  theme_classic() +
+      labs(y = "Vaccinated people",
+         x = NULL,
+         title = "Daily new vaccinations ",
+         subtitle = "It fluctuates between 50-150k") 
+
+```
+
+```{r}
+plot2 <- data_filtered %>% 
+  ggplot(aes(x = date,
+             y = people_vaccinated_per_hundred)) +
+  theme_classic() +
+  geom_col(size = 0.8) +
+      labs(y = "Vaccinated per 100 people",
+         x = NULL,
+         title = "Vaccination rate in Kazakhstan",
+         caption = "Figure 2. Data sourced from Our World in Data",
+         subtitle = "It reached only 37% in Kazakhstan") 
+```
+
+```{r}
+ggarrange(plot1, plot2, ncol = 1)
+```
+If we look at the Figure 2, Kasakhstan has started to immunizing people in April 2021. Since 50-150 thousand people were receiving vaccination daily and reached only 37.69% in September 2021. From Figure 3, you can see that vaccination is Kazakhstan is significantly lower than the leading countries where around 70% of the population is vaccinated.
+
+
+```{r}
+world_map <- map_data("world") %>% 
+  subset(region != "Antarctica")
+
+data3 <- data_raw %>% 
+  select(continent, people_vaccinated_per_hundred, date, location) %>% 
+  filter(date == "2021-09-01")
+
+ww_data <- world_map %>% 
+  left_join(data3, by = c("region" = "location"))
+```
+```{r}
+map_plot <- ww_data %>%
+  ggplot(aes(long, lat, group = group))+
+  geom_polygon(aes(fill = people_vaccinated_per_hundred), color = "white")+
+  scale_fill_viridis_c(option = "C") + 
+  theme(axis.line=element_blank(),
+        axis.ticks=element_blank(),
+        axis.text = element_blank(),
+        legend.position="bottom",
+          panel.background=element_blank(),
+        panel.border=element_blank(),panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),
+        plot.background=element_blank())+
+      labs(y = NULL,
+         x = NULL,
+         title = "Vaccination rate by September 2021",
+         caption = " ",
+         subtitle = "Kazakhstan was lower than European countries")
+```
+
+
+```{r}
+map_plot
+```
+
+
+## References
+
+Mathieu, E., Ritchie, H., Ortiz-Ospina, E. et al. A global database of COVID-19 vaccinations. Nat Hum Behav (2021). https://doi.org/10.1038/s41562-021-01122-8
+
+Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+
+R Core Team (2021). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686,
+  https://doi.org/10.21105/joss.01686
+
+Kirill Müller (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1.
+  https://CRAN.R-project.org/package=here
+  
+Garrett Grolemund, Hadley Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical
+  Software, 40(3), 1-25. URL https://www.jstatsoft.org/v40/i03/.
+  
+C. Sievert. Interactive Web-Based Data Visualization with R, plotly, and shiny. Chapman and Hall/CRC Florida,
+  2020.
+  
+Alboukadel Kassambara (2020). ggpubr: 'ggplot2' Based Publication Ready Plots. R package version 0.4.0.
+  https://CRAN.R-project.org/package=ggpubr
 

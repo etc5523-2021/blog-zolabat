@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2021-09-16-covid-19-in-kazakhstan/",
+    "title": "Covid-19 in Kazakhstan",
+    "description": "Exploring Covid-19 situation in Kazakhstan",
+    "author": [
+      {
+        "name": "Zoljargal Batsaikhan",
+        "url": {}
+      }
+    ],
+    "date": "2021-09-16",
+    "categories": [],
+    "contents": "\n\n\n\nIntroduction\nThe Covid-19 pandemic is having unprecedented impact globally but some have been more affected than others. In this blog post, I will explore the Covid-19 situation in Kazakhstan using publicly available data.\nData description\nThe data used in this blog was downloaded from Our World in Data website’s GitHub repo.\nThe original dataset contains 62 variables and 117021 observations but for the purpose of this report the following relevant variables has been chosen.\nVariable\nData Type\nDescription\ncontinent\ncharacter\nContinent of the geographical location\nlocation\ncharacter\nGeographical location\ndate\ndate\nDate\nnew_cases\nnumeric\nNew confirmed cases of the day\ntotal_deaths\nnumeric\nTotal death - cumulative\npeople_vaccinated_per_hundred\nnumeric\nTotal number of people who received at least one vaccine dose\nTotal confirmed cases\n\n\n\n\n\n\n\n\n\nIn Figure 1, daily new Covid-19 cases have been plotted with the stay home restriction measures. Since the beginning of the global pandemic the government of Kazakhstan announced only 1 restrict lockdown with minimum exceptions. It is interesting to note that in all 4 periods that the government recommended not leaving house, the cases actually increased immediately, while requirements are in place cases seem to decrease. Overall, the Kazakhstan had less than 500 daily cases till July 2021 when it recorded peak cases of 15000.\nAccording to Reuters, the Delta variant of the coronavirus on 22nd of June 2021. Since this time, the daily new cases in Kazakhstan increased exponentially and reached all time high.\nIn addition, if we look at the Figure 1, the pattern of zero case after sudden big increase of case numbers can be seen which lead me to suspect there might be data reporting issue.\nVaccination in Kazakhstan\nNext we looked at the vaccination rate in Kazakhstan.\n\n\n\n\n\n\n\n\n\n\n\n\nIf we look at the Figure 2, Kasakhstan has started to immunizing people in April 2021. Since 50-150 thousand people were receiving vaccination daily and reached only 37.69% in September 2021. From Figure 3, you can see that vaccination is Kazakhstan is significantly lower than the leading countries where around 70% of the population is vaccinated.\n\n\n\n\n\n\n\n\n\nReferences\nMathieu, E., Ritchie, H., Ortiz-Ospina, E. et al. A global database of COVID-19 vaccinations. Nat Hum Behav (2021). https://doi.org/10.1038/s41562-021-01122-8\nHasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8\nR Core Team (2021). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.\nWickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686\nKirill Müller (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1. https://CRAN.R-project.org/package=here\nGarrett Grolemund, Hadley Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical Software, 40(3), 1-25. URL https://www.jstatsoft.org/v40/i03/.\nC. Sievert. Interactive Web-Based Data Visualization with R, plotly, and shiny. Chapman and Hall/CRC Florida, 2020.\nAlboukadel Kassambara (2020). ggpubr: ‘ggplot2’ Based Publication Ready Plots. R package version 0.4.0. https://CRAN.R-project.org/package=ggpubr\n\n\n\n",
+    "preview": "posts/2021-09-16-covid-19-in-kazakhstan/covid-19-in-kazakhstan_files/figure-html5/unnamed-chunk-4-1.png",
+    "last_modified": "2021-09-17T08:11:10+10:00",
+    "input_file": "covid-19-in-kazakhstan.knit.md"
+  },
+  {
     "path": "posts/2021-08-31-about-covid-19-in-serbia/",
     "title": "About Covid-19 in Serbia",
     "description": "\"Exploring Covid-19 statistic of Serbia\"",

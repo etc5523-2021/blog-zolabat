@@ -133,7 +133,7 @@ ggplot() +
 ```
 In Figure 1, daily new Covid-19 cases have been plotted with the stay home restriction measures. Since the beginning of the global pandemic the government of Kazakhstan announced only 1 restrict lockdown with minimum exceptions. It is interesting to note that in all 4 periods that the government **recommended** not leaving house, the cases actually increased immediately, while requirements are in place cases seem to decrease. Overall, the Kazakhstan had less than 500 daily cases till July 2021 when it recorded peak cases of 15000.
 
-According to [Reuters](https://www.reuters.com/business/healthcare-pharmaceuticals/kazakhstan-detects-delta-variant-central-asia-braces-third-covid-wave-2021-06-22/), the Delta variant of the coronavirus on 22nd of June 2021. Since this time, the daily new cases in Kazakhstan increased exponentially and reached all time high.
+According to [Reuters](https://www.reuters.com/business/healthcare-pharmaceuticals/kazakhstan-detects-delta-variant-central-asia-braces-third-covid-wave-2021-06-22/), the Delta variant of the coronavirus on 22nd of June 2021 (red dashed line in Figure 1). Since this time, the daily new cases in Kazakhstan increased exponentially and reached all time high.
 
 In addition, if we look at the Figure 1, the pattern of zero case after sudden big increase of case numbers can be seen which lead me to suspect there might be data reporting issue. 
 
@@ -209,7 +209,7 @@ map_plot <- ww_data %>%
       labs(y = NULL,
          x = NULL,
          title = "Vaccination rate by September 2021",
-         caption = " ",
+         caption = "Figure 3. Data sourced from Our World in Data",
          subtitle = "Kazakhstan was lower than European countries")
 ```
 

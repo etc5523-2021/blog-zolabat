@@ -26,9 +26,9 @@ The relevant blog post for this assessment is in about-covid-19-in-serbia.html
 
 This assessment is due Fri Sep 17 2021 11.55PM AEST.
 
-My selected country is [FILL].
+My selected country is Kazakhstan.
 
-The relevant blog post for this assessment is in [FILL].html
+The relevant blog post for this assessment is in covid-19-in-kazakhstan.html
 
 - [ ] Selected a new country
 - [ ] Data Story 1
